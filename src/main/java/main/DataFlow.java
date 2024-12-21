@@ -29,13 +29,13 @@ public class DataFlow {
 
         env.setParallelism(2);
         ParameterTool parameterTool = ParameterTool.fromArgs(args);
-        String inputPath = "/Users/xi/Downloads/ip_source_data/source_data_3.csv";
-        String outputPath = "/Users/xi/Downloads/ip_output_data/output_data_para2_3.csv";
-        //String inputPath = parameterTool.get("input");
-        //String outputPath = parameterTool.get("output");
+        //String inputPath = "/Users/xi/Downloads/ip_source_data/source_data_3.csv";
+        //String outputPath = "/Users/xi/Downloads/ip_output_data/output_data_para2_3.csv";
+        String inputPath = parameterTool.get("input");
+        String outputPath = parameterTool.get("output");
 
         DataStreamSource<String> data = env.readTextFile(inputPath).setParallelism(2);
-        SingleOutputStreamOperator<Payload> inputStream = inputStream(data);
+        SingleOutputStreamOperator<Payload> inputStream = streamFromSource(data);
         //get side output
         DataStream<Payload> orders = inputStream.getSideOutput(ordersTag);
         DataStream<Payload> lineitem = inputStream.getSideOutput(lineitemTag);
@@ -60,7 +60,7 @@ public class DataFlow {
         env.execute();
     }
 
-    private static SingleOutputStreamOperator<Payload> inputStream(DataStreamSource<String> data) {
+    private static SingleOutputStreamOperator<Payload> streamFromSource(DataStreamSource<String> data) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
         SingleOutputStreamOperator<Payload> restDS = data.process(new ProcessFunction<String, Payload>() {
